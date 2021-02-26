@@ -1,5 +1,5 @@
 import { UILibrary } from 'smart-cli';
-import { Block } from './core/block.model';
+import { Block } from './core/block/block.model';
 
 /**
  * CHAIN INTRO 
@@ -16,4 +16,4 @@ UILibrary.out.printKeyValues({
 /**
  * CHAIN STARTUP
  */
-console.log(Block.mineBlock(Block.genesis(), { foo: 'Bar' }).toString());
+console.log(Block.mineBlock({ foo: 'Bar' }, Block.genesis()).toString());
