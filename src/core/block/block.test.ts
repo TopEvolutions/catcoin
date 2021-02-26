@@ -13,10 +13,7 @@ describe('Block', () => {
 
     it('Assigns a timestamp', () => {
         expect(prevBlock.getTimestamp()).toBeDefined();
-        expect(prevBlock.getTimestamp()).toBeGreaterThan(0);
-
         expect(lastBlock.getTimestamp()).toBeDefined();
-        expect(lastBlock.getTimestamp()).toBeGreaterThan(0);
     });
 
     it('Respects input `data`', () => {

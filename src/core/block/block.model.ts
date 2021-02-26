@@ -22,7 +22,7 @@ export class Block {
     }
 
     static genesis(): Block {
-        return new Block({ genesis: true }, '#GENESIS#', '---------',);
+        return new Block({ genesis: true }, '#GENESIS#', '---------', 0);
     }
 
     static mineBlock(
@@ -32,7 +32,7 @@ export class Block {
         const timestamp = new Date().getTime();
         return new Block(
             data,
-            Block.hashData(
+            Block._hashData(
                 data,
                 timestamp,
                 previousBlock.hash,
@@ -42,7 +42,15 @@ export class Block {
         );
     }
 
-    private static hashData(
+    static hashBlock(block: Block): string {
+        return this._hashData(
+            block.data,
+            block.timestamp,
+            block.previousHash,
+        );
+    }
+
+    private static _hashData(
         data: string,
         timestamp: number,
         previousHash: string,
