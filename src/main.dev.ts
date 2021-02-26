@@ -1,5 +1,9 @@
 import { UILibrary } from 'smart-cli';
+import { Block } from './core/block.model';
 
+/**
+ * CHAIN INTRO 
+ */
 UILibrary.out.printBoxTitle('ITALCHAIN - THE ITALIAN BLOCKCHAIN');
 UILibrary.out.printKeyValues({
     set: [
@@ -7,4 +11,9 @@ UILibrary.out.printKeyValues({
         { k: 'license', v: 'MIT' },
         { k: 'version', v: '0.0.0' },
     ]
-})
+});
+
+/**
+ * CHAIN STARTUP
+ */
+console.log(Block.mineBlock(Block.genesis(), { foo: 'Bar' }).toString());
