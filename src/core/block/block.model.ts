@@ -1,5 +1,4 @@
 import { SHA256 } from 'crypto-js';
-import { UILibrary } from 'smart-cli';
 import { MINING_DIFFICULTY, MINING_RATE } from '../config';
 
 export class Block {
@@ -36,9 +35,8 @@ export class Block {
         let data = { genesis: true };
         let prevHash = '-'.repeat(64);
         let timestamp = -1;
-        let nonce = 0;
-        let difficulty: any = null;
-        return new Block(data, hash, prevHash, timestamp, nonce, difficulty);
+        let nonce = -1;
+        return new Block(data, hash, prevHash, timestamp, nonce, MINING_DIFFICULTY);
     }
 
     static mineBlock(
@@ -49,7 +47,7 @@ export class Block {
         let hash: string;
         let timestamp: number;
         let { difficulty } = previousBlock;
-        UILibrary.out.printWarning('Starting mining of new block');
+        console.log(`Starting mining of new block. Previous block diff was ${difficulty}`);
 
         do {
             nonce++;
@@ -60,7 +58,7 @@ export class Block {
         } while (hash.substring(0, difficulty) !== '0'.repeat(difficulty));
         const minedBlock = new Block(data, hash, previousBlock.hash, timestamp, nonce, difficulty);
 
-        UILibrary.out.printWarning(`Mined new block: ${hash}`);
+        console.log(`Mined new block: ${hash}`);
         console.log(minedBlock.toString());
 
         return minedBlock;

@@ -1,41 +1,46 @@
-import { MINING_DIFFICULTY } from '../config';
 import { Block } from './block.model';
 
 describe('Block', () => {
 
+    let block: Block;
     let lastBlock: Block;
-    let prevBlock: Block;
     let inputData = { foo: 'bar' };
 
     beforeEach(() => {
-        prevBlock = Block.genesis();
-        lastBlock = Block.mineBlock(inputData, prevBlock);
+        lastBlock = Block.genesis();
+        block = Block.mineBlock(inputData, lastBlock);
     });
 
     it('Assigns a timestamp', () => {
-        expect(prevBlock.getTimestamp()).toBeDefined();
-        expect(prevBlock.getTimestamp()).not.toBe(0);
         expect(lastBlock.getTimestamp()).toBeDefined();
-        expect(lastBlock.getTimestamp()).not.toBe(0);
+        expect(block.getTimestamp()).toBeDefined();
     });
 
     it('Respects input `data`', () => {
-        expect(lastBlock.data).toBeDefined();
-        expect(JSON.stringify(lastBlock.data)).toBe(JSON.stringify(inputData));
+        expect(block.data).toBeDefined();
+        expect(JSON.stringify(block.data)).toBe(JSON.stringify(inputData));
     });
 
     it('Receives the hash from the previous block', () => {
-        expect(lastBlock.previousHash).toBe(prevBlock.hash);
+        expect(block.previousHash).toBe(lastBlock.hash);
     });
 
     it('Calculates its own hash', () => {
-        expect(lastBlock.hash).toBeDefined();
-        expect(lastBlock.hash.length).toBe(64);
+        expect(block.hash).toBeDefined();
+        expect(block.hash.length).toBe(64);
     });
 
     it('Generates a hash that matches difficulty', () => {
-        expect(lastBlock.hash.substring(0, MINING_DIFFICULTY)).toEqual('0'.repeat(MINING_DIFFICULTY));
+        expect(block.hash.substring(0, block.difficulty)).toEqual('0'.repeat(block.difficulty));
     });
 
+    it('Should lower difficulty if a block is mined too slowly', () => {
+        expect(Block.adjustDifficulty(lastBlock, lastBlock.timestamp + 36 * 100 * 1000))
+            .toEqual(lastBlock.difficulty - 1);
+    });
 
+    it('Should raise difficulty if a block is mined too quickly', () => {
+        expect(Block.adjustDifficulty(lastBlock, lastBlock.timestamp + 1))
+            .toEqual(lastBlock.difficulty + 1);
+    });
 });
