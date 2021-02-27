@@ -1,5 +1,7 @@
 import { UILibrary } from 'smart-cli';
-import { Block } from './core/block/block.model';
+import { ItalChain } from './core/chain/chain.model';
+import { APIServices } from './core/services/api.services';
+import { P2PServices } from './core/services/p2p.services';
 
 /**
  * CHAIN INTRO 
@@ -14,6 +16,24 @@ UILibrary.out.printKeyValues({
 });
 
 /**
- * CHAIN STARTUP
+ * INITIALIZE BLOCKCHAIN
  */
-console.log(Block.mineBlock({ foo: 'Bar' }, Block.genesis()).toString());
+const blockchain = new ItalChain();
+
+/**
+ * API SERVICES STARTUP
+ */
+const APISvc = new APIServices(blockchain);
+APISvc.start();
+
+/**
+ * P2P SERVICES STARTUP
+ */
+const P2PSvc = new P2PServices(
+    process.env.P2P_PORT && !isNaN(+process.env.P2P_PORT)
+        ? +process.env.P2P_PORT
+        : 5001,
+    blockchain,
+    process.env.P2P_PEERS ? process.env.P2P_PEERS.split(',') : [],
+);
+P2PSvc.start();

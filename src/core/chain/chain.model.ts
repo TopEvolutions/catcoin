@@ -1,14 +1,16 @@
 import { Block } from '../block/block.model';
+import { SysEvents } from '../enums/sys-events.enum';
+import { SystemEventsManager } from '../events/events.model';
 
 export class ItalChain {
-
-    private readonly _chain: Block[] = [];
+    private _chain: Block[] = [];
 
     constructor() {
         this._chain.push(Block.genesis());
     }
 
     get chain(): Block[] { return this._chain; }
+    get lastBlock(): Block { return this._chain[this._chain.length - 1]; }
 
     addBlock(data: any): void {
         const block = Block.mineBlock(
@@ -17,6 +19,7 @@ export class ItalChain {
         );
 
         this._chain.push(block);
+        SystemEventsManager.emit(SysEvents.newBlockAddedToChain);
     }
 
     isValidChain(chain: Block[]) {
@@ -49,17 +52,8 @@ export class ItalChain {
             return false;
         }
 
-        for (let i = 0; i < this._chain.length; i++)
-            this._chain.pop();
-
-        if (this._chain.length !== 0) {
-            console.log('Could not flush the chain before replace');
-            return false;
-        }
-
-        console.log('Replacing chain...');
-        this._chain.push(...newChain);
-        console.log('Chain replaced with new one');
+        this._chain = newChain;
+        console.log(`Chain replaced with new one. Blocks count: ${this._chain.length}`);
         return true;
     }
 }
