@@ -37,3 +37,9 @@ const P2PSvc = new P2PServices(
     process.env.P2P_PEERS ? process.env.P2P_PEERS.split(',') : [],
 );
 P2PSvc.start();
+
+setTimeout(() => {
+    for (let i = 0; i < 100; i++) {
+        blockchain.addBlock({ foo: `bar: ${i}` });
+    }
+}, 3000);

@@ -1,3 +1,4 @@
+import { MINING_DIFFICULTY } from '../config';
 import { Block } from './block.model';
 
 describe('Block', () => {
@@ -13,7 +14,9 @@ describe('Block', () => {
 
     it('Assigns a timestamp', () => {
         expect(prevBlock.getTimestamp()).toBeDefined();
+        expect(prevBlock.getTimestamp()).not.toBe(0);
         expect(lastBlock.getTimestamp()).toBeDefined();
+        expect(lastBlock.getTimestamp()).not.toBe(0);
     });
 
     it('Respects input `data`', () => {
@@ -29,4 +32,10 @@ describe('Block', () => {
         expect(lastBlock.hash).toBeDefined();
         expect(lastBlock.hash.length).toBe(64);
     });
+
+    it('Generates a hash that matches difficulty', () => {
+        expect(lastBlock.hash.substring(0, MINING_DIFFICULTY)).toEqual('0'.repeat(MINING_DIFFICULTY));
+    });
+
+
 });
