@@ -18,7 +18,7 @@ describe('TransactionsPool', () => {
         senderWallet = new Wallet();
         transaction = Transaction.newTransaction(senderWallet, recipient, amount);
         pool.upsertTransaction(transaction);
-        transactions = pool.transactions;
+        transactions = pool.validTransactions;
     });
 
     it('is defined', () => {
@@ -44,16 +44,16 @@ describe('TransactionsPool', () => {
         });
 
         it('should have the same transaction id', () => {
-            expect(pool.transactions[0].id).toBe(transaction.id);
+            expect(pool.validTransactions[0].id).toBe(transaction.id);
         });
 
         it('should have the updated transaction with the updated balance', () => {
-            expect(pool.transactions[0].outputs.find(o => o.address === senderWallet.address).amount)
+            expect(pool.validTransactions[0].outputs.find(o => o.address === senderWallet.address).amount)
                 .toBe(senderWallet.balance - amount - updatedAmount);
         });
 
         it('should have the updated transaction with the updated amount for the recipient', () => {
-            const recipientTotal = pool.transactions[0].outputs
+            const recipientTotal = pool.validTransactions[0].outputs
                 .filter(o => o.address === recipient)
                 .reduce((p, c) => p + c.amount, 0);
 
@@ -77,11 +77,11 @@ describe('TransactionsPool', () => {
         });
 
         it('should contain the new transaction', () => {
-            expect(pool.transactions.find(t => t.id === newTx.id)).toBeDefined();
+            expect(pool.validTransactions.find(t => t.id === newTx.id)).toBeDefined();
         });
 
         it('should preserve the old transactions too', () => {
-            expect(pool.transactions.length).toBe(2);
+            expect(pool.validTransactions.length).toBe(2);
         });
     });
 });

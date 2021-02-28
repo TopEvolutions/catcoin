@@ -46,7 +46,7 @@ describe('Wallet', () => {
         });
 
         it('should contain 1 tx in the pool', () => {
-            expect(pool.transactions.length).toBe(1);
+            expect(pool.validTransactions.length).toBe(1);
         });
     });
 });
