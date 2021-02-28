@@ -1,13 +1,13 @@
 import { Block } from '../block/block.model';
-import { ItalChain } from './chain.model'
+import { Blockchain } from './chain.model'
 
 describe('Chain', () => {
-    let bc: ItalChain;
-    let bc2: ItalChain;
+    let bc: Blockchain;
+    let bc2: Blockchain;
 
     beforeEach(() => {
-        bc = new ItalChain();
-        bc2 = new ItalChain();
+        bc = new Blockchain();
+        bc2 = new Blockchain();
     });
 
     it('is defined', () => {

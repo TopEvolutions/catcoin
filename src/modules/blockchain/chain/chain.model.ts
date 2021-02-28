@@ -1,8 +1,8 @@
 import { Block } from '../block/block.model';
-import { SysEvents } from '../enums/sys-events.enum';
-import { SystemEventsManager } from '../events/events.model';
+import { SysEvents } from '../../events/sys-events.enum';
+import { SystemEventsManager } from '../../events/events.model';
 
-export class ItalChain {
+export class Blockchain {
     private _chain: Block[] = [];
 
     constructor() {

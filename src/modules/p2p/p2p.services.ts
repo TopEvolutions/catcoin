@@ -1,11 +1,14 @@
-import { ItalChain } from '../chain/chain.model';
-import { EventEmitter } from 'events';
 import WebSocket from 'ws';
-import { SysEvents } from '../enums/sys-events.enum';
+import { SysEvents } from '../events/sys-events.enum';
 import { SystemEventsManager } from '../events/events.model';
+import { Blockchain } from '../../modules/blockchain/chain/chain.model';
+import { Transaction } from '../wallet/transaction.model';
+import { TransactionsPool } from '../wallet/transactions-pool.model';
+import { UILibrary } from 'smart-cli';
 
 export enum SocketMessages {
     blockchain = 'blockchain',
+    newTransaction = 'newTransaction',
 }
 
 export type P2PMessageType = {
@@ -25,8 +28,9 @@ export class P2PServices {
 
     constructor(
         private readonly _port: number,
-        private readonly _blockchain: ItalChain,
+        private readonly _blockchain: Blockchain,
         private readonly _peersAddresses: string[],
+        private readonly _transactionsPool: TransactionsPool,
     ) {
         this._server = new WebSocket.Server({ port: this._port });
         this.connectToPeers();
@@ -70,6 +74,9 @@ export class P2PServices {
             case SocketMessages.blockchain:
                 this._blockchain.replaceChain(decodedMessage.payload);
                 break;
+            case SocketMessages.newTransaction:
+                this.upsertTransaction(decodedMessage.payload);
+                break;
             default:
                 console.log('Unknown message type received from peer.');
                 return;
@@ -110,11 +117,30 @@ export class P2PServices {
         SystemEventsManager.on(SysEvents.newBlockAddedToChain, () => {
             this.syncChain();
         });
+        SystemEventsManager.on(SysEvents.newTransaction, (tx: Transaction) => {
+            this.broadcastTransaction(tx);
+        });
+    }
+
+    private broadcastTransaction(tx: Transaction): void {
+        this._peers.forEach(peer => peer.send(P2PMessage(SocketMessages.newTransaction, tx)));
+        UILibrary.out.printInfo(`Broadcasted transaction: ${tx.id}`);
     }
 
     private syncChain(): void {
         this._peers.forEach(peer => {
             peer.send(P2PMessage(SocketMessages.blockchain, this._blockchain.chain));
         });
+    }
+
+    private upsertTransaction(tx: Transaction): void {
+        if (Transaction.verifyTransaction(tx)) {
+            this._transactionsPool.upsertTransaction(tx);
+            UILibrary.out.printInfo(`Upsert transaction [${tx.id}]`);
+            return;
+        } else {
+            UILibrary.out.printError(`Refusing to add invalid transaction to pool: ${tx.id} - 
+            ${JSON.stringify(tx)}`);
+        }
     }
 }
