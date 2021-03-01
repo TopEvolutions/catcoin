@@ -1,10 +1,9 @@
 import { UILibrary } from 'smart-cli';
-import { APIServices } from './modules/api/api.services';
 import { Blockchain } from './modules/blockchain/chain/chain.model';
-import { ChainUtil } from './modules/blockchain/chain/chain.util';
-import { P2PServices } from './modules/p2p/p2p.services';
+import { P2PServices } from './app/p2p/p2p.services';
 import { TransactionsPool } from './modules/wallet/transactions-pool.model';
 import { Wallet } from './modules/wallet/wallet.model';
+import { APIServices } from './app/api/api.services';
 
 /**
  * CHAIN INTRO 
@@ -55,3 +54,14 @@ const P2PSvc = new P2PServices(
 );
 P2PSvc.start();
 UILibrary.out.printSubtitle('Initialized P2P services');
+
+
+// setTimeout(() => {
+//     const blockchainWallet = new Wallet(process.env.BCHAIN_WALLET);
+
+//     console.log(blockchainWallet.publicKey);
+//     console.log(blockchainWallet[`_keyPair`].getPrivate('hex'));
+
+//     // const minerRewardTX = blockchainWallet.createTransaction('miner', 10, transactionsPool);
+//     // console.log('TX is valid: ' + Transaction.verifyTransaction(minerRewardTX));
+// }, 1000);

@@ -1,6 +1,8 @@
 import { Block } from '../block/block.model';
 import { SysEvents } from '../../events/sys-events.enum';
 import { SystemEventsManager } from '../../events/events.model';
+import { Transaction } from '../../wallet/transaction.model';
+import { MINING_REWARD } from '../../../config';
 
 export class Blockchain {
     private _chain: Block[] = [];
@@ -12,7 +14,7 @@ export class Blockchain {
     get chain(): Block[] { return this._chain; }
     get lastBlock(): Block { return this._chain[this._chain.length - 1]; }
 
-    addBlock(data: any): void {
+    addBlock(data: Transaction[]): void {
         const block = Block.mineBlock(
             data,
             this.chain[this.chain.length - 1],
@@ -36,6 +38,17 @@ export class Blockchain {
 
             if (currentBlock.previousHash !== previousBlock.hash) return false;
             if (currentBlock.hash !== Block.hashBlock(currentBlock)) return false;
+            if (Array.isArray(currentBlock.data)) {
+                if (currentBlock.data.find(t => {
+                    // is a miner reward and reward is bigger than allowed
+                    if (t.input === null) {
+                        if (t.outputs[0].amount > MINING_REWARD) return true;
+                        return;
+                    }
+                    // is a tampered transaction (useless check?)
+                    if (!Transaction.verifyTransaction(t)) return true;
+                })) return false;
+            }
         }
 
         return true;

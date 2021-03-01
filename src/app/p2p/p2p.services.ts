@@ -1,9 +1,9 @@
 import WebSocket from 'ws';
-import { SysEvents } from '../events/sys-events.enum';
-import { SystemEventsManager } from '../events/events.model';
+import { SysEvents } from '../../modules/events/sys-events.enum';
+import { SystemEventsManager } from '../../modules/events/events.model';
 import { Blockchain } from '../../modules/blockchain/chain/chain.model';
-import { Transaction } from '../wallet/transaction.model';
-import { TransactionsPool } from '../wallet/transactions-pool.model';
+import { Transaction } from '../../modules/wallet/transaction.model';
+import { TransactionsPool } from '../../modules/wallet/transactions-pool.model';
 import { UILibrary } from 'smart-cli';
 
 export enum SocketMessages {

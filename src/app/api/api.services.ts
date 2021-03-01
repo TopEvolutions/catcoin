@@ -59,7 +59,7 @@ export class APIServices {
 
         // TRANSACTIONS HANDLERS
         this._expressApp.get('/transactions', (req, res) => {
-            res.send(this._transactionsPool.validTransactions);
+            res.send(this._transactionsPool.allTransactions);
         });
 
         this._expressApp.post('/transaction', (req, res) => {

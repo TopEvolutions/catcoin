@@ -1,0 +1,7 @@
+// WALLET CONFIG
+export const WALLET_INITIAL_BALANCE = 500;
+
+// BLOCKCHAIN CONFIG
+export const MINING_REWARD = 50;
+export const MINING_DIFFICULTY = 2;
+export const MINING_RATE = 30 * 1000; // 30s

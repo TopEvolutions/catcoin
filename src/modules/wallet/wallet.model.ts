@@ -1,9 +1,9 @@
 import { ec } from 'elliptic';
-import { INITIAL_BALANCE } from './config';
 import { ChainUtil } from '../blockchain/chain/chain.util';
 import { Transaction } from './transaction.model';
 import { UILibrary } from 'smart-cli';
 import { TransactionsPool } from './transactions-pool.model';
+import { WALLET_INITIAL_BALANCE } from '../../config';
 
 export class Wallet {
 
@@ -11,15 +11,17 @@ export class Wallet {
     private _publicKey: string;
     private _keyPair: ec.KeyPair;
 
-    constructor() {
-        this._balance = INITIAL_BALANCE;
-        this._keyPair = ChainUtil.genKeyPair();
+    constructor(
+        readonly _privateKey?: string
+    ) {
+        this._balance = WALLET_INITIAL_BALANCE;
+        this._keyPair = ChainUtil.genKeyPair(_privateKey);
         this._publicKey = this._keyPair.getPublic(true, 'hex');
     }
 
     get balance(): number { return this._balance; }
     get address(): string { return this._publicKey; }
-    get publicKey(): string { return this._publicKey; }
+    get publicKey(): string { return this._keyPair.getPublic('hex'); }
 
     sign(hash: string): string {
         return this._keyPair.sign(hash).toDER('hex');

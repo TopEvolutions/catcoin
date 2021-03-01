@@ -1,4 +1,5 @@
 import { UILibrary } from 'smart-cli';
+import { MINING_REWARD } from '../../config';
 import { ChainUtil } from '../blockchain/chain/chain.util';
 import { Wallet } from './wallet.model';
 
@@ -58,6 +59,17 @@ export class Transaction {
 
 
         return Transaction.signNewTransaction(senderWallet, outputs);
+    }
+
+    static minerRewardTransaction(address: string, reward: number): Transaction {
+        // miner reward transactions have no inputs, are not signed and contains the 
+        // outputs of the miners you want to reward. In our case it's always one.
+        // https://stackoverflow.com/questions/66428728/how-to-sign-miners-rewards-on-a-blockchain
+
+        const outputs: TransactionOutput[] = [
+            { address: address, amount: reward },
+        ];
+        return new Transaction(null, outputs);
     }
 
     static verifyTransaction(transaction: Transaction): boolean {

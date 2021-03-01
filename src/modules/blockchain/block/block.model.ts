@@ -1,9 +1,10 @@
 import { SHA256 } from 'crypto-js';
-import { MINING_DIFFICULTY, MINING_RATE } from '../config';
+import { MINING_DIFFICULTY, MINING_RATE } from '../../../config';
+import { Transaction } from '../../wallet/transaction.model';
 
 export class Block {
     constructor(
-        readonly data: any,
+        readonly data: Transaction[],
         readonly hash: string,
         readonly previousHash: string,
         readonly timestamp: number,
@@ -32,11 +33,12 @@ export class Block {
 
     static genesis(): Block {
         let hash = '#GENESIS#';
+        // TODO: assign tokens to mysterious wallet
         let data = { genesis: true };
         let prevHash = '-'.repeat(64);
         let timestamp = -1;
         let nonce = -1;
-        return new Block(data, hash, prevHash, timestamp, nonce, MINING_DIFFICULTY);
+        return new Block(data as any, hash, prevHash, timestamp, nonce, MINING_DIFFICULTY);
     }
 
     static mineBlock(

@@ -6,7 +6,10 @@ export class ChainUtil {
 
     private static readonly _EC = new elliptic.ec('secp256k1');
 
-    static genKeyPair() {
+    static genKeyPair(privateKey?: string) {
+        if (privateKey) {
+            return ChainUtil._EC.keyFromPrivate(privateKey);
+        }
         return ChainUtil._EC.genKeyPair();
     }
 

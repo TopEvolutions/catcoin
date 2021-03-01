@@ -1,4 +1,5 @@
 import { Block } from './block.model';
+import * as config from '../../../config';
 
 describe('Block', () => {
 
