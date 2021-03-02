@@ -1,4 +1,6 @@
 import { UILibrary } from 'smart-cli';
+import { SystemEventsManager } from '../events/events.model';
+import { SysEvents } from '../events/sys-events.enum';
 import { Transaction } from './transaction.model';
 
 export class TransactionsPool {
@@ -29,6 +31,13 @@ export class TransactionsPool {
 
             return tx;
         });
+    }
+
+    clear(emitEvent = true): void {
+        this._pool = [];
+        if (emitEvent) {
+            SystemEventsManager.emit(SysEvents.transactionsPoolCleared);
+        }
     }
 
     getTransaction(pubK: string): Transaction {

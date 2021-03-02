@@ -76,7 +76,7 @@ export class Block {
 
     static hashBlock(block: Block): string {
         return this._hashData(
-            block.data,
+            block.data as any,
             block.timestamp,
             block.previousHash,
             block.nonce,

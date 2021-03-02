@@ -38,6 +38,8 @@ export class Blockchain {
 
             if (currentBlock.previousHash !== previousBlock.hash) return false;
             if (currentBlock.hash !== Block.hashBlock(currentBlock)) return false;
+
+
             if (Array.isArray(currentBlock.data)) {
                 if (currentBlock.data.find(t => {
                     // is a miner reward and reward is bigger than allowed

@@ -4,6 +4,7 @@ import { P2PServices } from './app/p2p/p2p.services';
 import { TransactionsPool } from './modules/wallet/transactions-pool.model';
 import { Wallet } from './modules/wallet/wallet.model';
 import { APIServices } from './app/api/api.services';
+import { Miner } from './modules/miner/miner';
 
 /**
  * CHAIN INTRO 
@@ -56,12 +57,11 @@ P2PSvc.start();
 UILibrary.out.printSubtitle('Initialized P2P services');
 
 
-// setTimeout(() => {
-//     const blockchainWallet = new Wallet(process.env.BCHAIN_WALLET);
-
-//     console.log(blockchainWallet.publicKey);
-//     console.log(blockchainWallet[`_keyPair`].getPrivate('hex'));
-
-//     // const minerRewardTX = blockchainWallet.createTransaction('miner', 10, transactionsPool);
-//     // console.log('TX is valid: ' + Transaction.verifyTransaction(minerRewardTX));
-// }, 1000);
+/**
+ * MINER STARTUP
+ */
+const miner = new Miner(
+    blockchain,
+    wallet,
+    transactionsPool,
+);

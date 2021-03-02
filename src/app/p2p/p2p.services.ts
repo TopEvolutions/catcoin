@@ -5,10 +5,14 @@ import { Blockchain } from '../../modules/blockchain/chain/chain.model';
 import { Transaction } from '../../modules/wallet/transaction.model';
 import { TransactionsPool } from '../../modules/wallet/transactions-pool.model';
 import { UILibrary } from 'smart-cli';
+import { Block } from '../../modules/blockchain/block/block.model';
 
 export enum SocketMessages {
-    blockchain = 'blockchain',
-    newTransaction = 'newTransaction',
+    newTransaction = 'transaction.new',
+    clearTransactionsPool = 'transaction.pool.clear',
+
+    blockchain = 'blockchain.chain',
+    newBlockAdded = 'blockchain.new_block',
 }
 
 export type P2PMessageType = {
@@ -72,7 +76,14 @@ export class P2PServices {
 
         switch (decodedMessage.message) {
             case SocketMessages.blockchain:
-                this._blockchain.replaceChain(decodedMessage.payload);
+                this._blockchain.replaceChain(decodedMessage.payload as Block[]);
+                break;
+            case SocketMessages.clearTransactionsPool:
+                // TODO: verify that the pool has to be actually cleared. 
+                this._transactionsPool.clear();
+                break;
+            case SocketMessages.newBlockAdded:
+                this._blockchain.replaceChain([...this._blockchain.chain, decodedMessage.payload as Block]);
                 break;
             case SocketMessages.newTransaction:
                 this.upsertTransaction(decodedMessage.payload);
@@ -114,8 +125,8 @@ export class P2PServices {
     }
 
     private listenToSysEvents() {
-        SystemEventsManager.on(SysEvents.newBlockAddedToChain, () => {
-            this.syncChain();
+        SystemEventsManager.on(SysEvents.newBlockAddedToChain, block => {
+            this.syncChain(block);
         });
         SystemEventsManager.on(SysEvents.newTransaction, (tx: Transaction) => {
             this.broadcastTransaction(tx);
@@ -127,9 +138,12 @@ export class P2PServices {
         UILibrary.out.printInfo(`Broadcasted transaction: ${tx.id}`);
     }
 
-    private syncChain(): void {
+    private syncChain(block?: Block): void {
         this._peers.forEach(peer => {
-            peer.send(P2PMessage(SocketMessages.blockchain, this._blockchain.chain));
+            if (block)
+                peer.send(P2PMessage(SocketMessages.newBlockAdded, block));
+            else
+                peer.send(P2PMessage(SocketMessages.blockchain, this._blockchain.chain));
         });
     }
 

@@ -3,10 +3,10 @@ import bodyParser from 'body-parser';
 import express from 'express';
 import { UILibrary } from 'smart-cli';
 import { Blockchain } from '../../modules/blockchain/chain/chain.model';
-import { TransactionsPool } from '../wallet/transactions-pool.model';
-import { Wallet } from '../wallet/wallet.model';
-import { SystemEventsManager } from '../events/events.model';
-import { SysEvents } from '../events/sys-events.enum';
+import { SystemEventsManager } from '../../modules/events/events.model';
+import { SysEvents } from '../../modules/events/sys-events.enum';
+import { TransactionsPool } from '../../modules/wallet/transactions-pool.model';
+import { Wallet } from '../../modules/wallet/wallet.model';
 
 export class APIServices {
 
